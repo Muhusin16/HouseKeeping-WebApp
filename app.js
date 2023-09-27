@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 8080 ;
 
 app.use(bodyParser.json());
 app.use(errorHandler)
+app.use(express.json())
 
 const connecDb = async () =>{
   try{
@@ -70,13 +71,13 @@ app.post("/register", async (req, res) => {
   console.log(`User created ${newUser}`)
   await newUser.save();
   
-  res.status(201).json({ message: 'User registered successfully' });
+  res.status(201).json({ message: 'User registered successfully' ,id: User.id, email: User.email});
   
 }
 )
 //login User
 app.post("/login", async (req, res) => {
-try {
+
   const { email, password } = req.body;
 
   // Find the user by email
@@ -94,23 +95,49 @@ try {
   }
 
   // Generate a JWT token
-  const token = jwt.sign(
+  const accesstoken = jwt.sign(
     { userId: user._id, email: user.email },
     process.env.SECRET_ACCESS_KEY,
-    { expiresIn: '1h' }
+    { expiresIn: '10m' }
   );
+  res.status(200).json({accesstoken});
+  
+  function authenticateToken(req, res, next) {
+    // Get the token from the request header
+    const token = req.header('Authorization');
+  
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+  
+    // Verify the token
+    jwt.verify(token, process.env.SECRET_ACCESS_KEY, (err, user) => {
+      if (err) {
+        return res.status(403).json({ message: 'Forbidden' });
+      }
+      req.user = user; // Attach user data to the request object
+      next();
+    });
+  }
+    app.get('/home', authenticateToken, (req, res) => {
+      // Access the user information from req.user
+      const user = req.user;
+      res.json({ message: 'Welcome to the home page', user });
+    })
+  });
 
-  res.status(200).json({ message: 'Authentication successful', token });
-} catch (error) {
-  console.error('Error authenticating user:', error);
-  res.status(500).json({ message: 'Internal Server Error' });
-}
-});
 connecDb();
 
-
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
+
+
+
+
+
+
+
+
 
 
