@@ -12,11 +12,3 @@ const connecDb = async () =>{
   };
 
   module.exports = connecDb;
-
-  
-      
-      
-  
-
- 
-

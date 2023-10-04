@@ -12,8 +12,9 @@ app.use(bodyParser.json());
 app.use(errorHandler)
 app.use(express.json())
 
-app.use("/api/user", require("./routes/userRoutes"))
-
+app.use("/api/user", require("./routes/userRoutes"));
+app.use("/api", require("./routes/taskRoutes"))
+  
 connecDb();
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
