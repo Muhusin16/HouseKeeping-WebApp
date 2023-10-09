@@ -20,6 +20,7 @@ app.use(express.json())
 
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api", require("./routes/taskRoutes"));
+app.use("/api", require("./routes/adminRoutes"))
   
 connecDb();
 app.listen(PORT, () => {

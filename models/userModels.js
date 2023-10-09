@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
- 
+  isAdmin: {
+    type: Boolean,
+    default: false, 
+  },
     username:{
         type: String,
         required: [true, "Please add the user name"],
