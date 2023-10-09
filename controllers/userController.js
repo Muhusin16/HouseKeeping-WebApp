@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const saslprep = require("saslprep");
 const User = require("../models/userModels");
 
+
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
 
