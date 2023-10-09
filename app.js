@@ -1,33 +1,30 @@
+
 const express = require('express');
+const connecDb = require("./config/dbConnection")
 const bodyParser = require('body-parser');
+const errorHandler = require('./middleware/errorHandler');
+const cors = require("cors")
+
+require("dotenv").config();
+
 const app = express();
-const connectDb = require("./config/dbConnection");
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-app.use(express.static('public'));
-
 const PORT = process.env.PORT || 8080;
 
+app.use(cors({
+  origin:true
+}));
 
-// Register route
-app.post('/register', async (req, res) => {
-  const { username, email, password } = req.body;
-  if(!username || !email || !password) {
-    res.status(400);
-    throw new Error("All Fields Are Mandatory");
-}
-const userAvailable = await User.findOne({email});
-if (userAvailable) {
-    res.status(400);
-    throw new Error("Usere already registered!");
-}else
-  console.log(`User Registered - Username: ${username}, Email: ${email}, Password: ${password}`);
-  res.send('Registration Successful');
-});
-connectDb();
-// Start the server
+app.use(bodyParser.json());
+app.use(errorHandler)
+app.use(express.json())
+
+app.use("/api/user", require("./routes/userRoutes"));
+app.use("/api", require("./routes/taskRoutes"));
+  
+connecDb();
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
+
+
+
