@@ -1,35 +1,32 @@
+const User = require('../models/userModels');
 const bcrypt = require('bcrypt');
 const saslprep = require('saslprep');
-const Admin = require('../models/adminModel'); 
 
 const adminUser = async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
+  const { username, email, password, isAdmin } = req.body;
 
-    const existingAdmin = await Admin.findOne();
+  const existingUser = await User.findOne({ email });
 
-    if (existingAdmin) {
-      return res.status(400).json({ message: 'Admin user already exists' });
-    }
-
-    const preparedPassword = saslprep(password);
-
-    const hashedPassword = await bcrypt.hash(preparedPassword, 10);
-
-    const newAdmin = new Admin({
-      username,
-      email,
-      password: hashedPassword,
-      isAdmin: true, 
-    });
-
-    await newAdmin.save();
-
-    res.status(201).json({ message: 'Admin user created successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+  if (existingUser) {
+    return res.status(400).json({ message: 'User already exists' });
   }
+
+  const preparedPassword = saslprep(password);
+
+  const hashedPassword = await bcrypt.hash(preparedPassword, 10);
+
+  const newUser = await User.create({
+    username,
+    email,
+    password: hashedPassword,
+    isAdmin,
+  });
+
+  console.log(`Admin user created ${newUser}`);
+
+  await newUser.save();
+
+  res.status(201).json({ id: newUser.id, email: newUser.email });
 };
 
 const getAllUsers = async (req, res) => {
