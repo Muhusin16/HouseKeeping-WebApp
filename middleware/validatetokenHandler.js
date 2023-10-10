@@ -14,13 +14,12 @@ const validateToken = async (req, res, next) => {
           return res.status(401).json({ message: 'User is not authorized' });
         }
 
-        // Fetch user details and set them in req.user
         const user = await User.findById(decoded.userId);
         if (!user) {
           return res.status(401).json({ message: 'User not found' });
         }
 
-        req.user = user; // Set user details in req.user
+        req.user = user; 
         next();
       });
     } else {
