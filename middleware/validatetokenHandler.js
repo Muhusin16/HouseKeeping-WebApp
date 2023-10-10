@@ -4,7 +4,7 @@ const User = require("../models/userModels");
 const validateToken = async (req, res, next) => {
   try {
     let token;
-    let authHeader = req.headers.Authorization || req.headers.authorization;
+    let authHeader = req.headers.Authorization;
 
     if (authHeader && authHeader.startsWith("Bearer")) {
       token = authHeader.split(" ")[1];

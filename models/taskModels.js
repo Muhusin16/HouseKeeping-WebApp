@@ -13,7 +13,10 @@ const roomSchema = new mongoose.Schema({
     enum: ["hall", "kitchen", "reception", "conference", "washroom"],
   },
   tasks: [taskSchema],
-});
+  
+},
+{timestamps:true}
+);
 
 const Room = mongoose.model("Room", roomSchema);
 
