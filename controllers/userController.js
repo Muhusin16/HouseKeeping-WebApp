@@ -77,4 +77,3 @@ const homepage = async (req, res) => {
 
 module.exports = { registerUser, loginUser, homepage };
 
-
