@@ -14,6 +14,7 @@ const adminUser = async (req, res) => {
   return res.send(err)
 }};
 
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
