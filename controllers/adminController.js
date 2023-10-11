@@ -1,5 +1,5 @@
 const User = require('../models/userModels');
-const dotenv = require("dotenv")
+
 
 const adminUser = async (req, res) => {
   const { username, password, } = req.body;
