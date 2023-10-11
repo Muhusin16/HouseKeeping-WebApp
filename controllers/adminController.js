@@ -1,5 +1,4 @@
 const User = require('../models/userModels');
-const dotenv = require("dotenv")
 
 const adminUser = async (req, res) => {
   const { username, password, } = req.body;
@@ -14,6 +13,7 @@ const adminUser = async (req, res) => {
 } catch(err) {
   return res.send(err)
 }};
+
 
 const getAllUsers = async (req, res) => {
   try {
