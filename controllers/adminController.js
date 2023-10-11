@@ -1,33 +1,19 @@
 const User = require('../models/userModels');
-const bcrypt = require('bcrypt');
-const saslprep = require('saslprep');
+const dotenv = require("dotenv")
 
 const adminUser = async (req, res) => {
-  const { username, email, password, isAdmin } = req.body;
+  const { username, password, } = req.body;
+  const {ADMIN_USER, ADMIN_PASS} = process.env;
 
-  const existingUser = await User.findOne({ email });
-
-  if (existingUser) {
-    return res.status(400).json({ message: 'User already exists' });
+  try {
+  if (username ===ADMIN_USER && password === ADMIN_PASS) {
+    return res.status(200).json({ message: 'Welcome to the admin page' });
+  }else{
+    return res.status(400).json({message:"Validation Failed"})
   }
-
-  const preparedPassword = saslprep(password);
-
-  const hashedPassword = await bcrypt.hash(preparedPassword, 10);
-
-  const newUser = await User.create({
-    username,
-    email,
-    password: hashedPassword,
-    isAdmin,
-  });
-
-  console.log(`Admin user created ${newUser}`);
-
-  await newUser.save();
-
-  res.status(201).json({ id: newUser.id, email: newUser.email });
-};
+} catch(err) {
+  return res.send(err)
+}};
 
 const getAllUsers = async (req, res) => {
   try {
