@@ -50,7 +50,7 @@ const loginUser = async (req, res) => {
      { userId: user._id, email: user.email }
   ,
   process.env.SECRET_ACCESS_KEY,
-  { expiresIn: '10m' }
+  { expiresIn: '7d' }
   );
 
   res.status(200).json({ token });
