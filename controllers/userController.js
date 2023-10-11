@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const saslprep = require("saslprep");
 const User = require("../models/userModels");
 
 
@@ -13,9 +12,7 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ message: 'User already exists' });
   }
 
-  const preparedPassword = saslprep(password);
-
-  const hashedPassword = await bcrypt.hash(preparedPassword, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({
     username,
@@ -40,7 +37,7 @@ const loginUser = async (req, res) => {
     return res.status(401).json({ message: 'Authentication failed' });
   }
 
-  const passwordMatch = await bcrypt.compare(saslprep(password), user.password);
+  const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordMatch) {
     return res.status(401).json({ message: 'Authentication failed' });
