@@ -1,12 +1,19 @@
 const express = require("express");
 
 const router = express.Router();
+const {createRoom, getallRoom, getoneRoom, updateRoom, deleteRoom  } = require("../controllers/taskControllers")
 
-const {completeTask } = require("../controllers/taskControllers")
+const isAdmin = require("../middleware/adminHandler")
 
-const {validateToken} = require("../middleware/validatetokenHandler")
+router.post('/createroom', createRoom)
 
-router.post('/completeTask',validateToken, completeTask)
+router.get('/getallroom',isAdmin, getallRoom)
+
+router.get('/getoneroom/:roomId', getoneRoom)
+
+router.put('/updateroom/:roomId', updateRoom)
+
+router.delete('/deleteroom/:roomId', deleteRoom)
 
 module.exports = router
 
