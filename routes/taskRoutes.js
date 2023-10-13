@@ -1,9 +1,11 @@
 const express = require("express");
 
 const router = express.Router();
-const {createRoom, getallRoom, getoneRoom, updateRoom, deleteRoom  } = require("../controllers/taskControllers")
+const {createRoom, getallRoom, getoneRoom, updateRoom, deleteRoom   } = require("../controllers/taskControllers")
 
 const isAdmin = require("../middleware/adminHandler")
+
+//router.post('/complete-task/:taskId', completeTask)
 
 router.post('/createroom', createRoom)
 
