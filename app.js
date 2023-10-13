@@ -3,7 +3,8 @@ const express = require('express');
 const connecDb = require("./config/dbConnection")
 const bodyParser = require('body-parser');
 const errorHandler = require('./middleware/errorHandler');
-const cors = require("cors")
+const cors = require("cors");
+const morgan = require("morgan");
 
 require("dotenv").config();
 
@@ -13,7 +14,7 @@ const PORT = process.env.PORT
 app.use(cors({
   origin:true
 }));
-
+app.use(morgan('combined'))
 app.use(bodyParser.json());
 app.use(errorHandler)
 app.use(express.json())
