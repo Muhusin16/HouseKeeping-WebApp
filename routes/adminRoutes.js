@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const { getAllUsers, adminUser } = require('../controllers/adminController');
 const isAdmin = require("../middleware/adminHandler")
 

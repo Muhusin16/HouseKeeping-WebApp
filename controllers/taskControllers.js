@@ -1,4 +1,4 @@
-const Room = require('../models/taskModels'); // Import your Mongoose Room model
+const Room = require('../models/taskModels'); 
 
 // Create a new room
 const createRoom = async (req, res) => {
