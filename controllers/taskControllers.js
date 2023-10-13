@@ -1,5 +1,13 @@
 const Room = require('../models/taskModels'); 
+const completeTask = async (req, res) => {
+  try{const { roomId} = req.body
+      
 
+  } catch (error) {
+    console.error(error)
+    res.status(404).json({message: 'Not Found'})
+  }
+}
 // Create a new room
 const createRoom = async (req, res) => {
   try {
@@ -70,4 +78,4 @@ const deleteRoom =async (req, res) => {
   }
 };
 
-module.exports = {createRoom, getallRoom, getoneRoom, updateRoom, deleteRoom};
+module.exports = {completeTask, createRoom, getallRoom, getoneRoom, updateRoom, deleteRoom};
