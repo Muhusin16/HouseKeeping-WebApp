@@ -9,7 +9,6 @@ const hallSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
-
 // Schema for the "kitchen" room
 const kitchenSchema = new mongoose.Schema({
   roomName: {
