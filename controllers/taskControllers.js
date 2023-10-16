@@ -82,7 +82,7 @@ const getHall = async (req, res) => {
     res.json(room.tasks);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Room Not Found!" });
   }
 };
 const getkitchen = async (req, res) => {
@@ -91,7 +91,7 @@ const getkitchen = async (req, res) => {
     res.json(room.tasks);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Room Not Found!" });
   }
 };
 
@@ -101,7 +101,7 @@ const getreception =  async (req, res) => {
     res.json(room.tasks);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: -"Room Not Found!" });
   }
 };
 
@@ -111,7 +111,7 @@ const getConference =  async (req, res) => {
     res.json(room.tasks);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Room Not Found!" });
   }
 };
 
@@ -121,7 +121,7 @@ const getWashroom = async (req, res) => {
     res.json(room.tasks);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Room Not Found!" });
   }
 };
 

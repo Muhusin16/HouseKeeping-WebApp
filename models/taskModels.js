@@ -1,19 +1,13 @@
 const mongoose = require("mongoose");
 
-// Schema for tasks
-const taskSchema = new mongoose.Schema({
-  taskName: String,
-  taskDuration: String,
-  isCompleted: Boolean,
-});
-
 // Schema for the "hall" room
 const hallSchema = new mongoose.Schema({
   roomName: {
-    type: String,
-    default: "hall",
+    type : String,
+    default: "hall"
   },
-  tasks: [taskSchema],
+  tasks: [],
+  problemSection: String,
 }, {
   timestamps: true,
 });
@@ -21,10 +15,11 @@ const hallSchema = new mongoose.Schema({
 // Schema for the "kitchen" room
 const kitchenSchema = new mongoose.Schema({
   roomName: {
-    type: String,
-    default: "kitchen",
+    type : String,
+    default: "kitchen"
   },
-  tasks: [taskSchema],
+  tasks: [],
+  problemSection: String,
 }, {
   timestamps: true,
 });
@@ -32,10 +27,11 @@ const kitchenSchema = new mongoose.Schema({
 // Schema for the "reception" room
 const receptionSchema = new mongoose.Schema({
   roomName: {
-    type: String,
-    default: "reception",
+    type : String,
+    default: "reception"
   },
-  tasks: [taskSchema],
+  tasks: [],
+  problemSection: String,
 }, {
   timestamps: true,
 });
@@ -43,10 +39,11 @@ const receptionSchema = new mongoose.Schema({
 // Schema for the "conference" room
 const conferenceSchema = new mongoose.Schema({
   roomName: {
-    type: String,
-    default: "conference",
+    type : String,
+    default: "conference"
   },
-  tasks: [taskSchema],
+  tasks: [],
+  problemSection: String,
 }, {
   timestamps: true,
 });
@@ -54,17 +51,12 @@ const conferenceSchema = new mongoose.Schema({
 // Schema for the "washroom" room
 const washroomSchema = new mongoose.Schema({
   roomName: {
-    type: String,
-    default: "washroom",
+    type : String,
+    default: "washroom"
   },
-  tasks: [taskSchema],
-},
-{
-  problemSection:{
-    type: String,
-  }
-},
- {
+  tasks: [],
+  problemSection: String,
+}, {
   timestamps: true,
 });
 
