@@ -9,6 +9,6 @@ router.post("/register", registerUser );
 
 router.post("/login", loginUser );
 
-router.get("/home", validateToken,homepage );
+router.get("/home", validateToken, homepage );
 
 module.exports = router;
