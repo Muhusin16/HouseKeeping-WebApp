@@ -11,6 +11,5 @@ router.get('/hall', getHall).get('/conference', getConference).get('/kitchen', g
 // router.get('/getoneroom/:roomId', getoneRoom)
 // router.put('/updateroom/:roomId', updateRoom)
 // router.delete('/deleteroom/:roomId', deleteRoom)
-
 module.exports = router
 
