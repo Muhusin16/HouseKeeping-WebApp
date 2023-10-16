@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../project/Strapi"
+		},
+		{
+			"path": "../../Muhusin workspace/CRUD APPLICATION"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "webApp"
+	}
+}
