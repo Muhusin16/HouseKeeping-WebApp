@@ -1,4 +1,3 @@
-
 const { Hall, Kitchen, Reception, Conference, Washroom } = require("../models/taskModels");
 
 // Create a room and add tasks
