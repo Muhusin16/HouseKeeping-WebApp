@@ -1,4 +1,3 @@
-
 const express = require('express');
 const connecDb = require("./config/dbConnection")
 const bodyParser = require('body-parser');
