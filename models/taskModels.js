@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 // Schema for the "hall" room
 const hallSchema = new mongoose.Schema({
   hallData: {
-    type : [],
+    type : String,
   },
   problemSection: String,
 }, {
@@ -11,7 +11,7 @@ const hallSchema = new mongoose.Schema({
 // Schema for the "kitchen" room
 const kitchenSchema = new mongoose.Schema({
   kitchenData: {
-    type : [],
+    type : String,
   },
  
   problemSection: String,
@@ -22,7 +22,7 @@ const kitchenSchema = new mongoose.Schema({
 // Schema for the "reception" room
 const receptionSchema = new mongoose.Schema({
   receptionData: {
-    type : []
+    type : String,
   },
 
   problemSection: String,
@@ -33,7 +33,7 @@ const receptionSchema = new mongoose.Schema({
 // Schema for the "conference" room
 const conferenceSchema = new mongoose.Schema({
  conferenceData: {
-    type : []
+    type : String,
   },
 
   problemSection: String,
@@ -44,7 +44,7 @@ const conferenceSchema = new mongoose.Schema({
 // Schema for the "washroom" room
 const washroomSchema = new mongoose.Schema({
  washroomData: {
-    type : []
+    type : String,
   },
 
   problemSection: String,
