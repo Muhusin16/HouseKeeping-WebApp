@@ -3,10 +3,10 @@ const { Hall, Kitchen, Reception, Conference, Washroom } = require("../models/ta
 // Create a room and add tasks
 const createHall = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { hallData } = req.body;
 
     const room = await Hall.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      hallData
     });
 
     res.status(201).json(room);
@@ -18,10 +18,10 @@ const createHall = async (req, res) => {
 
 const createKitchen = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { kitchenData} = req.body;
 
     const room = await Kitchen.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      kitchenData
     });
 
     res.status(201).json(room);
@@ -32,10 +32,10 @@ const createKitchen = async (req, res) => {
 };
 const createReception = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const {receptionData} = req.body;
 
     const room = await Reception.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      receptionData
     });
 
     res.status(201).json(room);
@@ -47,10 +47,10 @@ const createReception = async (req, res) => {
 
 const createConference =  async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { conferenceData } = req.body;
 
     const room = await Conference.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      conferenceData
     });
 
     res.status(201).json(room);
@@ -62,10 +62,10 @@ const createConference =  async (req, res) => {
 
 const createWashroom = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { washroomData } = req.body;
 
     const room = await Washroom.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      washroomData
     });
 
     res.status(201).json(room);
@@ -79,7 +79,7 @@ const createWashroom = async (req, res) => {
 const getHall = async (req, res) => {
   try {
     const room = await Hall.findOne();
-    res.json(room.tasks);
+    res.json(room.hallData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Room Not Found!" });
