@@ -1,81 +1,130 @@
-const Room = require('../models/taskModels'); 
-const completeTask = async (req, res) => {
-  try{const { roomId} = req.body
-      
 
-  } catch (error) {
-    console.error(error)
-    res.status(404).json({message: 'Not Found'})
-  }
-}
-// Create a new room
-const createRoom = async (req, res) => {
+const { Hall, Kitchen, Reception, Conference, Washroom } = require("../models/taskModels");
+
+// Create a room and add tasks
+const createHall = async (req, res) => {
   try {
-    const { roomName, tasks } = req.body;
-    const room = new Room({ roomName , tasks});
-    await room.save();
+    const { taskName, taskDuration, isCompleted } = req.body;
+
+    const room = await Hall.create({
+      tasks: { taskName, taskDuration, isCompleted }
+    });
+
     res.status(201).json(room);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Get all rooms
-const getallRoom =async (req, res) => {
+const createKitchen = async (req, res) => {
   try {
-    const rooms = await Room.find();
-    res.status(200).json(rooms);
+    const { taskName, taskDuration, isCompleted } = req.body;
+
+    const room = await Kitchen.create({
+      tasks: { taskName, taskDuration, isCompleted }
+    });
+
+    res.status(201).json(room);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
-
-// Get a specific room by ID
-const getoneRoom =async (req, res) => {
+const createReception = async (req, res) => {
   try {
-    const room = await Room.findById(req.params.roomId);
-    if (!room) {
-      return res.status(404).json({ message: 'Room not found' });
-    }
-    res.status(200).json(room);
+    const { taskName, taskDuration, isCompleted } = req.body;
+
+    const room = await Reception.create({
+      tasks: { taskName, taskDuration, isCompleted }
+    });
+
+    res.status(201).json(room);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Update a room by ID
-const updateRoom = async (req, res) => {
+const createConference =  async (req, res) => {
   try {
-    const updatedRoom = await Room.findByIdAndUpdate(
-      req.params.roomId,
-      { $set: req.body },
-      { new: true }
-    );
-    if (!updatedRoom) {
-      return res.status(404).json({ message: 'Room not found' });
-    }
-    res.status(200).json(updatedRoom);
+    const { taskName, taskDuration, isCompleted } = req.body;
+
+    const room = await Conference.create({
+      tasks: { taskName, taskDuration, isCompleted }
+    });
+
+    res.status(201).json(room);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Delete a room by ID
-const deleteRoom =async (req, res) => {
+const createWashroom = async (req, res) => {
   try {
-    const deletedRoom = await Room.findByIdAndRemove(req.params.roomId);
-    if (!deletedRoom) {
-      return res.status(404).json({ message: 'Room not found' });
-    }
-    res.status(200).json(deletedRoom);
+    const { taskName, taskDuration, isCompleted } = req.body;
+
+    const room = await Washroom.create({
+      tasks: { taskName, taskDuration, isCompleted }
+    });
+
+    res.status(201).json(room);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-module.exports = {completeTask, createRoom, getallRoom, getoneRoom, updateRoom, deleteRoom};
+// Get tasks for a specific room
+const getHall = async (req, res) => {
+  try {
+    const room = await Hall.findOne();
+    res.json(room.tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+const getkitchen = async (req, res) => {
+  try {
+    const room = await Kitchen.findOne();
+    res.json(room.tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getreception =  async (req, res) => {
+  try {
+    const room = await Reception.findOne();
+    res.json(room.tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getConference =  async (req, res) => {
+  try {
+    const room = await Conference.findOne();
+    res.json(room.tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getWashroom = async (req, res) => {
+  try {
+    const room = await Washroom.findOne();
+    res.json(room.tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = {createHall, createKitchen,createConference, createReception, createWashroom, getHall, getConference,getWashroom, getreception, getkitchen };
+
