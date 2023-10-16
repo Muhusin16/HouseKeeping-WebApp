@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 // Schema for the "hall" room
 const hallSchema = new mongoose.Schema({
   roomName: {
