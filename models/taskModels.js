@@ -6,7 +6,6 @@ const hallSchema = new mongoose.Schema({
     type : String,
     default: "hall"
   },
-  tasks: [],
   problemSection: String,
 }, {
   timestamps: true,
@@ -18,7 +17,7 @@ const kitchenSchema = new mongoose.Schema({
     type : String,
     default: "kitchen"
   },
-  tasks: [],
+ 
   problemSection: String,
 }, {
   timestamps: true,
@@ -30,7 +29,7 @@ const receptionSchema = new mongoose.Schema({
     type : String,
     default: "reception"
   },
-  tasks: [],
+
   problemSection: String,
 }, {
   timestamps: true,
@@ -42,7 +41,7 @@ const conferenceSchema = new mongoose.Schema({
     type : String,
     default: "conference"
   },
-  tasks: [],
+
   problemSection: String,
 }, {
   timestamps: true,
@@ -54,7 +53,7 @@ const washroomSchema = new mongoose.Schema({
     type : String,
     default: "washroom"
   },
-  tasks: [],
+
   problemSection: String,
 }, {
   timestamps: true,
