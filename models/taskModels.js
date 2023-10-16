@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const hallSchema = new mongoose.Schema({
   hallData: {
     type : String,
-  },
-  problemSection: String,
+  }
+ 
 }, {
   timestamps: true,
 });
