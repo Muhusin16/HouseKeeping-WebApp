@@ -16,6 +16,16 @@ const createHall = async (req, res) => {
   }
 };
 
+const getHall = async (req, res) => {
+  try {
+    const rooms = await Hall.find(); 
+    res.json(rooms);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Rooms Not Found!" });
+  }
+};
+
 const createKitchen = async (req, res) => {
   try {
     const { kitchenData } = req.body;
@@ -28,6 +38,16 @@ const createKitchen = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getKitchen = async (req, res) => {
+  try {
+    const rooms = await Kitchen.find();
+    res.json(rooms);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Rooms Not Found!" });
   }
 };
 
@@ -46,6 +66,16 @@ const createReception = async (req, res) => {
   }
 };
 
+const getReception = async (req, res) => {
+  try {
+    const rooms = await Reception.find();
+    res.json(rooms);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Rooms Not Found!" });
+  }
+};
+
 const createConference = async (req, res) => {
   try {
     const { conferenceData } = req.body;
@@ -60,6 +90,18 @@ const createConference = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+const getConference = async (req, res) => {
+  try {
+    const rooms = await Conference.find();
+    res.json(rooms);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Rooms Not Found!" });
+  }
+};
+
 
 const createWashroom = async (req, res) => {
   try {
@@ -76,56 +118,16 @@ const createWashroom = async (req, res) => {
   }
 };
 
-// Get tasks for a specific room
-const getHall = async (req, res) => {
-  try {
-    const room = await Hall.findOne();
-    res.json(room.hallData);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Room Not Found!" });
-  }
-};
-
-const getKitchen = async (req, res) => {
-  try {
-    const room = await Kitchen.findOne();
-    res.json(room.kitchenData);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Room Not Found!" });
-  }
-};
-
-const getReception = async (req, res) => {
-  try {
-    const room = await Reception.findOne();
-    res.json(room.receptionData);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Room Not Found!" });
-  }
-};
-
-const getConference = async (req, res) => {
-  try {
-    const room = await Conference.findOne();
-    res.json(room.conferenceData);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Room Not Found!" });
-  }
-};
-
 const getWashroom = async (req, res) => {
   try {
-    const room = await Washroom.findOne();
-    res.json(room.washroomData);
+    const rooms = await Washroom.find();
+    res.json(rooms);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Room Not Found!" });
+    res.status(500).json({ message: "Rooms Not Found!" });
   }
 };
+
 
 module.exports = {
   createHall,
