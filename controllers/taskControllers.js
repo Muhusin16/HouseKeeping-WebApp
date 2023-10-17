@@ -6,7 +6,7 @@ const createHall = async (req, res) => {
     const { hallData } = req.body;
 
     const room = await Hall.create({
-      hallData
+      hallData 
     });
 
     res.status(201).json(room);
@@ -18,10 +18,10 @@ const createHall = async (req, res) => {
 
 const createKitchen = async (req, res) => {
   try {
-    const { kitchenData} = req.body;
+    const { kitchenData } = req.body;
 
     const room = await Kitchen.create({
-      kitchenData
+      kitchenData // Corrected to use kitchenData
     });
 
     res.status(201).json(room);
@@ -30,12 +30,13 @@ const createKitchen = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const createReception = async (req, res) => {
   try {
-    const {receptionData} = req.body;
+    const { receptionData } = req.body;
 
     const room = await Reception.create({
-      receptionData
+      receptionData // Corrected to use receptionData
     });
 
     res.status(201).json(room);
@@ -45,12 +46,12 @@ const createReception = async (req, res) => {
   }
 };
 
-const createConference =  async (req, res) => {
+const createConference = async (req, res) => {
   try {
     const { conferenceData } = req.body;
 
     const room = await Conference.create({
-      conferenceData
+      conferenceData // Corrected to use conferenceData
     });
 
     res.status(201).json(room);
@@ -65,7 +66,7 @@ const createWashroom = async (req, res) => {
     const { washroomData } = req.body;
 
     const room = await Washroom.create({
-      washroomData
+      washroomData // Corrected to use washroomData
     });
 
     res.status(201).json(room);
@@ -85,30 +86,31 @@ const getHall = async (req, res) => {
     res.status(500).json({ message: "Room Not Found!" });
   }
 };
-const getkitchen = async (req, res) => {
+
+const getKitchen = async (req, res) => {
   try {
     const room = await Kitchen.findOne();
-    res.json(room.tasks);
+    res.json(room.kitchenData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Room Not Found!" });
   }
 };
 
-const getreception =  async (req, res) => {
+const getReception = async (req, res) => {
   try {
     const room = await Reception.findOne();
-    res.json(room.tasks);
+    res.json(room.receptionData);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: -"Room Not Found!" });
+    res.status(500).json({ message: "Room Not Found!" });
   }
 };
 
-const getConference =  async (req, res) => {
+const getConference = async (req, res) => {
   try {
     const room = await Conference.findOne();
-    res.json(room.tasks);
+    res.json(room.conferenceData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Room Not Found!" });
@@ -118,11 +120,22 @@ const getConference =  async (req, res) => {
 const getWashroom = async (req, res) => {
   try {
     const room = await Washroom.findOne();
-    res.json(room.tasks);
+    res.json(room.washroomData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Room Not Found!" });
   }
 };
 
-module.exports = {createHall, createKitchen,createConference, createReception, createWashroom, getHall, getConference,getWashroom, getreception, getkitchen };
+module.exports = {
+  createHall,
+  createKitchen,
+  createReception,
+  createConference,
+  createWashroom,
+  getHall,
+  getKitchen,
+  getReception,
+  getConference,
+  getWashroom,
+};
