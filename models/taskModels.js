@@ -12,8 +12,9 @@ const hallSchema = new mongoose.Schema({
 const kitchenSchema = new mongoose.Schema({
   kitchenData: {
     type : String,
-  }
+  },
  
+  problemSection: String,
 }, {
   timestamps: true,
 });

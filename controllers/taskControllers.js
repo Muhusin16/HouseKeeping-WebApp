@@ -3,10 +3,10 @@ const { Hall, Kitchen, Reception, Conference, Washroom } = require("../models/ta
 // Create a room and add tasks
 const createHall = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { hallData } = req.body;
 
     const room = await Hall.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      hallData 
     });
 
     res.status(201).json(room);
@@ -18,10 +18,10 @@ const createHall = async (req, res) => {
 
 const createKitchen = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { kitchenData } = req.body;
 
     const room = await Kitchen.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      kitchenData // Corrected to use kitchenData
     });
 
     res.status(201).json(room);
@@ -30,12 +30,13 @@ const createKitchen = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const createReception = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { receptionData } = req.body;
 
     const room = await Reception.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      receptionData // Corrected to use receptionData
     });
 
     res.status(201).json(room);
@@ -45,12 +46,12 @@ const createReception = async (req, res) => {
   }
 };
 
-const createConference =  async (req, res) => {
+const createConference = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { conferenceData } = req.body;
 
     const room = await Conference.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      conferenceData // Corrected to use conferenceData
     });
 
     res.status(201).json(room);
@@ -62,10 +63,10 @@ const createConference =  async (req, res) => {
 
 const createWashroom = async (req, res) => {
   try {
-    const { taskName, taskDuration, isCompleted } = req.body;
+    const { washroomData } = req.body;
 
     const room = await Washroom.create({
-      tasks: { taskName, taskDuration, isCompleted }
+      washroomData // Corrected to use washroomData
     });
 
     res.status(201).json(room);
@@ -79,36 +80,37 @@ const createWashroom = async (req, res) => {
 const getHall = async (req, res) => {
   try {
     const room = await Hall.findOne();
-    res.json(room.tasks);
+    res.json(room.hallData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Room Not Found!" });
   }
 };
-const getkitchen = async (req, res) => {
+
+const getKitchen = async (req, res) => {
   try {
     const room = await Kitchen.findOne();
-    res.json(room.tasks);
+    res.json(room.kitchenData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Room Not Found!" });
   }
 };
 
-const getreception =  async (req, res) => {
+const getReception = async (req, res) => {
   try {
     const room = await Reception.findOne();
-    res.json(room.tasks);
+    res.json(room.receptionData);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: -"Room Not Found!" });
+    res.status(500).json({ message: "Room Not Found!" });
   }
 };
 
-const getConference =  async (req, res) => {
+const getConference = async (req, res) => {
   try {
     const room = await Conference.findOne();
-    res.json(room.tasks);
+    res.json(room.conferenceData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Room Not Found!" });
@@ -118,11 +120,22 @@ const getConference =  async (req, res) => {
 const getWashroom = async (req, res) => {
   try {
     const room = await Washroom.findOne();
-    res.json(room.tasks);
+    res.json(room.washroomData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Room Not Found!" });
   }
 };
 
-module.exports = {createHall, createKitchen,createConference, createReception, createWashroom, getHall, getConference,getWashroom, getreception, getkitchen };
+module.exports = {
+  createHall,
+  createKitchen,
+  createReception,
+  createConference,
+  createWashroom,
+  getHall,
+  getKitchen,
+  getReception,
+  getConference,
+  getWashroom,
+};
