@@ -4,7 +4,7 @@ const hallSchema = new mongoose.Schema({
   hallData: {
     type : String,
   }
- 
+   problemSection: String
 }, {
   timestamps: true,
 });
@@ -13,8 +13,9 @@ const kitchenSchema = new mongoose.Schema({
   kitchenData: {
     type : String,
   }
- 
-}, {
+   problemSection: String
+  },
+ {
   timestamps: true,
 });
 
