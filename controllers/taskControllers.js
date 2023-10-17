@@ -126,4 +126,3 @@ const getWashroom = async (req, res) => {
 };
 
 module.exports = {createHall, createKitchen,createConference, createReception, createWashroom, getHall, getConference,getWashroom, getreception, getkitchen };
-
