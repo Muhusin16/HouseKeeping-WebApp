@@ -1,15 +1,14 @@
 const express = require("express");
-
 const router = express.Router();
-const { createHall, createConference, createKitchen, createReception, createWashroom,
-getHall, getConference, getWashroom, getKitchen,getReception  } = require("../controllers/taskControllers")
 
-router.post('/hall', createHall ).post('/conference', createConference).post('/kitchen', createKitchen).post('/reception', createReception).post('/washroom', createWashroom)
+const { createRoom, updateRoom , getRoomTasks} = require("../controllers/taskControllers");
 
-router.get('/hall', getHall).get('/conference', getConference).get('/kitchen', getKitchen).get('/washroom', getWashroom).get('/reception', getReception)
+// Create a task in the Hall
+router.post("/create", createRoom);
 
-// router.get('/getoneroom/:roomId', getoneRoom)
-// router.put('/updateroom/:roomId', updateRoom)
-// router.delete('/deleteroom/:roomId', deleteRoom)
-module.exports = router
+// Update a task in the Hall
+router.put("/update", updateRoom);
 
+router.get("/getTask/:id", getRoomTasks)
+
+module.exports = router;

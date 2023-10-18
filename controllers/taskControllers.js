@@ -1,143 +1,65 @@
-const { Hall, Kitchen, Reception, Conference, Washroom } = require("../models/taskModels");
+const Task = require("../models/taskModels");
 
-// Create a room and add tasks
-const createHall = async (req, res) => {
+// Create a task in a specific room for a user
+const createRoom = async (req, res) => {
   try {
-    const { hallData } = req.body;
+    const { user_id, roomType, roomData } = req.body;
 
-    const room = await Hall.create({
-      hallData 
+    const task = await Task.create({
+      user_id,
+      roomType,
+      roomData,
     });
 
-    res.status(201).json(room);
+    res.status(201).json(task);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-const getHall = async (req, res) => {
+// Get tasks for a user in a specific room
+const getRoomTasks = async (req, res) => {
   try {
-    const rooms = await Hall.find(); 
-    res.json(rooms);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Rooms Not Found!" });
-  }
-};
+    const { user_id } = req.params;
 
-const createKitchen = async (req, res) => {
-  try {
-    const { kitchenData } = req.body;
+    const tasks = await Task.find({ user_id});
 
-    const room = await Kitchen.create({
-      kitchenData // Corrected to use kitchenData
-    });
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({ message: "No tasks found for the user and room" });
+    }
 
-    res.status(201).json(room);
+    res.status(200).json(tasks);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-const getKitchen = async (req, res) => {
+// Update tasks for a user in a specific room
+const updateRoom = async (req, res) => {
   try {
-    const rooms = await Kitchen.find();
-    res.json(rooms);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Rooms Not Found!" });
-  }
-};
+    const { user_id, roomType, updatedData } = req.body;
 
-const createReception = async (req, res) => {
-  try {
-    const { receptionData } = req.body;
+    const task = await Task.findOneAndUpdate(
+      { user_id, roomType },
+      { roomData: updatedData },
+      { new: true } // To return the updated task
+    );
 
-    const room = await Reception.create({
-      receptionData // Corrected to use receptionData
-    });
+    if (!task) {
+      return res.status(404).json({ message: "Task not found for the user and room" });
+    }
 
-    res.status(201).json(room);
+    res.status(200).json(task);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
-
-const getReception = async (req, res) => {
-  try {
-    const rooms = await Reception.find();
-    res.json(rooms);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Rooms Not Found!" });
-  }
-};
-
-const createConference = async (req, res) => {
-  try {
-    const { conferenceData } = req.body;
-
-    const room = await Conference.create({
-      conferenceData // Corrected to use conferenceData
-    });
-
-    res.status(201).json(room);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-
-const getConference = async (req, res) => {
-  try {
-    const rooms = await Conference.find();
-    res.json(rooms);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Rooms Not Found!" });
-  }
-};
-
-
-const createWashroom = async (req, res) => {
-  try {
-    const { washroomData } = req.body;
-
-    const room = await Washroom.create({
-      washroomData // Corrected to use washroomData
-    });
-
-    res.status(201).json(room);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-const getWashroom = async (req, res) => {
-  try {
-    const rooms = await Washroom.find();
-    res.json(rooms);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Rooms Not Found!" });
-  }
-};
-
 
 module.exports = {
-  createHall,
-  createKitchen,
-  createReception,
-  createConference,
-  createWashroom,
-  getHall,
-  getKitchen,
-  getReception,
-  getConference,
-  getWashroom,
+  createRoom,
+  updateRoom,
+  getRoomTasks
 };
