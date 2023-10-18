@@ -9,6 +9,6 @@ router.post("/create", createRoom);
 // Update a task in the Hall
 router.put("/update", updateRoom);
 
-router.get("/getTask/:id", getRoomTasks)
+router.get("/getTask/:user_id", getRoomTasks)
 
 module.exports = router;
