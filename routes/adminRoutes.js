@@ -8,7 +8,7 @@ const isAdmin = require("../middleware/adminHandler")
 
 router.post("/admin", adminUser);
 
-router.get('/rooms/:user_id', getRoomByUserId);
+//router.get('/rooms/:user_id', getRoomByUserId);
 
 router.get('/users',isAdmin,  getAllUsers);
 
