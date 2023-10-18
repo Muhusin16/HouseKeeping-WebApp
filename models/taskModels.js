@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 // Schema for the "hall" room
 const hallSchema = new mongoose.Schema({
+  user_id : {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true, 
+    ref: "User",
+},
   hallData: {
     type : [],
   },
@@ -12,6 +17,11 @@ const hallSchema = new mongoose.Schema({
 });
 // Schema for the "kitchen" room
 const kitchenSchema = new mongoose.Schema({
+  user_id : {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true, 
+    ref: "User",
+},
   kitchenData: {
     type : [],
   },
@@ -25,6 +35,11 @@ const kitchenSchema = new mongoose.Schema({
 
 // Schema for the "reception" room
 const receptionSchema = new mongoose.Schema({
+  user_id : {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true, 
+    ref: "User",
+},
   receptionData: {
     type : [],
   },
@@ -38,6 +53,11 @@ const receptionSchema = new mongoose.Schema({
 
 // Schema for the "conference" room
 const conferenceSchema = new mongoose.Schema({
+  user_id : {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true, 
+    ref: "User",
+},
  conferenceData: {
     type : [],
   },
@@ -51,6 +71,11 @@ const conferenceSchema = new mongoose.Schema({
 
 // Schema for the "washroom" room
 const washroomSchema = new mongoose.Schema({
+  user_id : {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true, 
+    ref: "User",
+},
  washroomData: {
     type : [],
   },
