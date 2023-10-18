@@ -5,6 +5,7 @@ const hallSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true, 
     ref: "User",
+    unique: true
 },
   hallData: {
     type : [],
@@ -25,7 +26,6 @@ const kitchenSchema = new mongoose.Schema({
   kitchenData: {
     type : [],
   },
- 
   problemSection:{ 
     type:String,
   } 
@@ -39,11 +39,11 @@ const receptionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true, 
     ref: "User",
+   
 },
   receptionData: {
     type : [],
   },
-
   problemSection:{ 
     type:String,
   } 
@@ -61,7 +61,6 @@ const conferenceSchema = new mongoose.Schema({
  conferenceData: {
     type : [],
   },
-
   problemSection:{ 
     type:String,
   } 
