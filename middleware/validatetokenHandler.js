@@ -1,34 +1,25 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/userModels");
+const asyncHandler = require("express-async-handler");
 
-const validateToken = async (req, res, next) => {
-  try {
+const jwt = require("jsonwebtoken");
+
+const validateToken = asyncHandler(async (req,res,next) =>{
     let token;
     let authHeader = req.headers.Authorization || req.headers.authorization;
-
     if (authHeader && authHeader.startsWith("Bearer")) {
-      token = authHeader.split(" ")[1];
-
-      jwt.verify(token, process.env.SECRET_ACCESS_KEY, async (err, decoded) => {
-        if (err) {
-          return res.status(401).json({ message: 'User is not authorized' });
+        token = authHeader.split(" ")[1];
+        jwt.verify(token, process.env.SECRET_ACCESS_KEY, (err, decoded) => {
+            if (err) {
+                res.status(401);
+                throw new Error("User is not authorized");
+            }
+                req.user=decoded.user
+                next();
+        });
+        if (!token) {
+            res.status(401);
+            throw new Error("user is not authorized or token is missing");
         }
-
-        const user = await User.findById(decoded.userId);
-        if (!user) {
-          return res.status(401).json({ message: 'User not found' });
-        }
-
-        req.user = user; 
-        next();
-      });
-    } else {
-      res.status(401).json({ message: 'User is not authorized or token is missing' });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
+});
 
-module.exports = { validateToken };
+module.exports = validateToken;

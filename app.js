@@ -13,7 +13,7 @@ const PORT = process.env.PORT
 app.use(cors({
   origin:true
 }));
-app.use(morgan('combined'))
+app.use(morgan('short'))
 app.use(bodyParser.json());
 app.use(errorHandler)
 app.use(express.json())
