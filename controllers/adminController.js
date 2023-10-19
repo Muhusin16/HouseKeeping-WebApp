@@ -6,7 +6,7 @@ const adminUser = async (req, res) => {
   const {ADMIN_USER, ADMIN_PASS} = process.env;
 
   try {
-  if (username ===ADMIN_USER && password === ADMIN_PASS) {
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
     return res.status(200).json({ message: 'Welcome to the admin page' });
   }else{
     return res.status(400).json({message:"Validation Failed"})

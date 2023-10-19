@@ -12,7 +12,6 @@ const taskSchema = new mongoose.Schema({
     required: true,
   },
   roomData: []
-  
 });
 
 const Task = mongoose.model("Task", taskSchema);
