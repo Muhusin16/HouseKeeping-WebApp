@@ -5,6 +5,7 @@ const errorHandler = require('./middleware/errorHandler');
 const cors = require("cors");
 const morgan = require("morgan");
 
+
 require("dotenv").config();
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(morgan('short'))
 app.use(bodyParser.json());
 app.use(errorHandler)
 app.use(express.json())
+
 
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api", require("./routes/taskRoutes"));

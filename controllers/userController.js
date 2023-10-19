@@ -1,7 +1,7 @@
 //const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require("../models/userModels");
-
+const bcrypt = require("bcrypt")
 
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -12,11 +12,11 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ message: 'User already exists' });
   }
 
-  //const hashedPassword = await bcrypt.hash(password, 10,);
+  const hashedPassword = await bcrypt.hash(password, 10,);
   const newUser = await User.create({
     username,
     email,
-    password,
+    password:hashedPassword,
     
   });
   console.log(`User created ${newUser}`);
@@ -37,9 +37,9 @@ const loginUser = async (req, res) => {
     return res.status(401).json({ message: 'Authentication failed' });
   }
 
-  //const passwordMatch = await bcrypt.compare(password, user.password);
+  const passwordMatch = await bcrypt.compare(password, user.password);
 
-  if (!password) {
+  if (!passwordMatch) {
     return res.status(401).json({ message: 'Authentication failed' });
   }
 
@@ -61,7 +61,6 @@ const homepage = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
-
     res.status(200).json({
       message: `Authentication Successful, Welcome to the task page ${user.username}`,
     });
