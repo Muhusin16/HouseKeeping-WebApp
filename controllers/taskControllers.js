@@ -1,22 +1,35 @@
 const Task = require("../models/taskModels");
 
-// Create a task in a specific room for a user
+// Creating a task in a specific room for a user or update the data if the user already exists
 const createRoom = async (req, res) => {
   try {
     const { user_id, roomType, roomData } = req.body;
 
-    const task = await Task.create({
-      user_id,
-      roomType,
-      roomData,
-    });
+    // Check if the user already exists
+    const existingUser = await Task.findOne({ user_id, roomType });
 
-    res.status(201).json(task);
+    if (existingUser) {
+      // User already exists for this room, update the room data
+      existingUser.roomData = roomData;
+      await existingUser.save();
+      res.status(200).json(existingUser);
+    } else {
+      // User doesn't exist for this room, creating a new room
+      const newTask = await Task.create({
+        user_id,
+        roomType,
+        roomData,
+      });
+      res.status(201).json(newTask);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Rest of your code...
+
 
 // Get tasks for a user in a specific room
 const getRoomTasks = async (req, res) => {
@@ -44,7 +57,7 @@ const updateRoom = async (req, res) => {
     const task = await Task.findOneAndUpdate(
       { user_id, roomType },
       { roomData: updatedData },
-      { new: true } // To return the updated task
+      { new: true } 
     );
 
     if (!task) {
