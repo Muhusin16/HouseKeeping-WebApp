@@ -1,24 +1,23 @@
 const Task = require("../models/taskModels");
 
-// Creating a task in a specific room for a user or update the data if the user already exists
 const createRoom = async (req, res) => {
   try {
     const { user_id, roomType, roomData } = req.body;
 
-    // Check if the user already exists
     const existingUser = await Task.findOne({ user_id, roomType });
 
     if (existingUser) {
-      // User already exists for this room, update the room data
+      // User already exists for this room, room data will be updated
       existingUser.roomData = roomData;
       await existingUser.save();
       res.status(200).json(existingUser);
     } else {
-      // User doesn't exist for this room, creating a new room
+      // if User doesn't exist for this room, creating a new room
       const newTask = await Task.create({
         user_id,
         roomType,
         roomData,
+        
       });
       res.status(201).json(newTask);
     }
@@ -28,9 +27,6 @@ const createRoom = async (req, res) => {
   }
 };
 
-// Rest of your code...
-
-
 // Get tasks for a user in a specific room
 const getRoomTasks = async (req, res) => {
   try {
@@ -38,10 +34,10 @@ const getRoomTasks = async (req, res) => {
 
     const tasks = await Task.find({ user_id});
 
-    if (!tasks || tasks.length === 0) {
+    if (!tasks) {
       return res.status(404).json({ message: "No tasks found for the user and room" });
     }
-
+   
     res.status(200).json(tasks);
   } catch (error) {
     console.error(error);
@@ -70,9 +66,37 @@ const updateRoom = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+const getUserTasksByDate = async (req, res) => {
+  try {
+    const { user_id, date } = req.params;
+
+    // Define the start and end date for the query (from midnight to midnight)
+    const startDate = new Date(date);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(date);
+    endDate.setHours(23, 59, 59, 999);
+
+    const tasks = await Task.find({
+      user_id,
+      date: { $gte: startDate, $lte: endDate },
+    });
+
+    if (!tasks || tasks.length === 0) {
+      return res.status(404).json({ message: "No tasks found for the user and date" });
+    }
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 module.exports = {
   createRoom,
   updateRoom,
-  getRoomTasks
+  getRoomTasks,
+  getUserTasksByDate, 
 };
+
