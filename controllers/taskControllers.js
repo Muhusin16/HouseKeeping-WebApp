@@ -68,17 +68,12 @@ const updateRoom = async (req, res) => {
 };
 const getUserTasksByDate = async (req, res) => {
   try {
-    const { user_id, date } = req.params;
+    const { user_id } = req.params;
 
-    // Define the start and end date for the query (from midnight to midnight)
-    const startDate = new Date(date);
-    startDate.setHours(0, 0, 0, 0);
-    const endDate = new Date(date);
-    endDate.setHours(23, 59, 59, 999);
+    
 
     const tasks = await Task.find({
-      user_id,
-      date: { $gte: startDate, $lte: endDate },
+      user_id
     });
 
     if (!tasks || tasks.length === 0) {
