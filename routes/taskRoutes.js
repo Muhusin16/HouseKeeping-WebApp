@@ -9,6 +9,6 @@ router.put("/update", updateRoom);
 
 router.get("/getTask/:user_id", getRoomTasks)
 
-router.get("/getTasksByDate/:user_id/:date", getUserTasksByDate);
+router.get("/getTasksByDate/:user_id", getUserTasksByDate);
 
 module.exports = router;
