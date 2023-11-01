@@ -10,8 +10,6 @@ function isAdmin(req, res, next) {
     res.status(401).json({ message: 'Unauthorized. Admin credentials required.' });
   }
 }
-
 module.exports = isAdmin;
 
-  
-  
+    
