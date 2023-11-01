@@ -66,17 +66,22 @@ const updateRoom = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const getUserTasksByDate = async (req, res) => {
   try {
-    const { user_id } = req.params;
+    const { user_id} = req.params;
 
-    
+    // Define the start and end date for the query (from midnight to midnight)
+    //const startDate = new Date(date);
+    //startDate.setHours(0, 0, 0, 0);
+    //const endDate = new Date(date);
+    //endDate.setHours(23, 59, 59, 999);
 
     const tasks = await Task.find({
-      user_id
+      user_id,
     });
 
-    if (!tasks || tasks.length === 0) {
+    if (!tasks) {
       return res.status(404).json({ message: "No tasks found for the user and date" });
     }
 
@@ -87,11 +92,9 @@ const getUserTasksByDate = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createRoom,
   updateRoom,
   getRoomTasks,
   getUserTasksByDate, 
 };
-

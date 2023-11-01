@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const taskSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -11,13 +10,12 @@ const taskSchema = new mongoose.Schema({
     enum: ["hall", "kitchen", "reception", "conference", "washroom"],
     required: true,
   },
-  roomData: [],
-  date : {
+  roomData: [
+  ],
+  date: {
     type: Date,
-    default:Date.now,
-  }
+    default: Date.now,
+  },
 });
-
 const Task = mongoose.model("Task", taskSchema);
-
 module.exports = Task;

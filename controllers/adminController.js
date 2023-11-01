@@ -1,6 +1,5 @@
 const User = require('../models/userModels');
 
-
 const adminUser = async (req, res) => {
   const { username, password, } = req.body;
   const {ADMIN_USER, ADMIN_PASS} = process.env;
