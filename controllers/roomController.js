@@ -46,13 +46,13 @@ const updateTask = (roomType) => async (req, res) => {
         updatedTask = await KitchenTask.findByIdAndUpdate(taskId, req.body, { new: true });
         break;
         case "reception":
-            updatedTask = await KitchenTask.findByIdAndUpdate(taskId, req.body, { new: true });
-            break;
-            case "conference":
-        updatedTask = await KitchenTask.findByIdAndUpdate(taskId, req.body, { new: true });
+          updatedTask = await ReceptionTask.findByIdAndUpdate(taskId, req.body, { new: true });
+          break;
+        case "conference":
+        updatedTask = await ConfernceTask.findByIdAndUpdate(taskId, req.body, { new: true });
         break;
         case "washroom":
-        updatedTask = await KitchenTask.findByIdAndUpdate(taskId, req.body, { new: true });
+        updatedTask = await WashroomTask.findByIdAndUpdate(taskId, req.body, { new: true });
         break;
       default:
         return res.status(400).json({ message: "Invalid roomType" });

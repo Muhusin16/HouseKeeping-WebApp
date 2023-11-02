@@ -12,7 +12,7 @@ const createRoom = async (req, res) => {
       await existingUser.save();
       res.status(200).json(existingUser);
     } else {
-      // if User doesn't exist for this room, creating a new room
+      // if User doesn't exist for this room, it will create a new room
       const newTask = await Task.create({
         user_id,
         roomType,
