@@ -1,4 +1,4 @@
-const { HallTask, KitchenTask, ReceptionTask, ConfernceTask, WashroomTask } = require("../models/roomModel");
+const { HallTask, KitchenTask, ReceptionTask, ConferenceTask, WashroomTask } = require("../models/roomModel");
 
 const createTask = (roomType) => async (req, res) => {
   try {
@@ -6,19 +6,54 @@ const createTask = (roomType) => async (req, res) => {
 
     switch (roomType) {
       case "hall":
-        newTask = new HallTask({ roomType, roomData: req.body });
+        newTask = new HallTask({
+          roomType,
+          roomData: req.body.roomData.map((data) => ({
+            title: data.title, 
+            titleImage: data.titleImage,
+            problem: data.problem,
+          })),
+        });
         break;
       case "kitchen":
-        newTask = new KitchenTask({ roomType, roomData: req.body });
+        newTask = new KitchenTask({
+          roomType,
+          roomData: req.body.roomData.map((data) => ({
+            title: data.title,
+            titleImage: data.titleImage,
+            problem: data.problem,
+          })),
+        });
         break;
       case "reception":
-        newTask = new ReceptionTask({ roomType, roomData: req.body });
+        newTask = new ReceptionTask({
+          roomType,
+          roomData: req.body.roomData.map((data) => ({
+            title: data.title,
+            titleImage: data.titleImage,
+            problem: data.problem,
+          })),
+        });
         break;
       case "conference":
-        newTask = new ConfernceTask({ roomType, roomData: req.body });
-        break;     
+        newTask = new ConferenceTask({
+          roomType,
+          roomData: req.body.roomData.map((data) => ({
+            title: data.title,
+            titleImage: data.titleImage,
+            problem: data.problem,
+          })),
+        });
+        break;
       case "washroom":
-        newTask = new WashroomTask({ roomType, roomData: req.body });
+        newTask = new WashroomTask({
+          roomType,
+          roomData: req.body.roomData.map((data) => ({
+            title: data.title, 
+            titleImage: data.titleImage,
+            problem: data.problem,
+          })),
+        });
         break;
       default:
         return res.status(400).json({ message: "Invalid roomType" });
@@ -45,13 +80,13 @@ const updateTask = (roomType) => async (req, res) => {
       case "kitchen":
         updatedTask = await KitchenTask.findByIdAndUpdate(taskId, req.body, { new: true });
         break;
-        case "reception":
-          updatedTask = await ReceptionTask.findByIdAndUpdate(taskId, req.body, { new: true });
-          break;
-        case "conference":
-        updatedTask = await ConfernceTask.findByIdAndUpdate(taskId, req.body, { new: true });
+      case "reception":
+        updatedTask = await ReceptionTask.findByIdAndUpdate(taskId, req.body, { new: true });
         break;
-        case "washroom":
+      case "conference":
+        updatedTask = await ConferenceTask.findByIdAndUpdate(taskId, req.body, { new: true }); 
+        break;
+      case "washroom":
         updatedTask = await WashroomTask.findByIdAndUpdate(taskId, req.body, { new: true });
         break;
       default:
@@ -62,11 +97,11 @@ const updateTask = (roomType) => async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-      res.status(200).json(updatedTask);
+    res.status(200).json(updatedTask);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-module.exports = { createTask, updateTask};
+module.exports = { createTask, updateTask };

@@ -11,16 +11,12 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT
 
-app.use(cors({
-  origin:true
-}));
+app.use(cors({origin:true}));
 app.use(morgan('short'))
 app.use(bodyParser.json());
 app.use(errorHandler)
 app.use(express.json())
 app.use(CooKieParser())
-
-
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api", require("./routes/taskRoutes"));
 app.use("/api", require("./routes/adminRoutes"))
