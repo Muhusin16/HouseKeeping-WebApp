@@ -1,78 +1,67 @@
 const jwt = require('jsonwebtoken');
-const User = require("../models/userModels");
-const bcrypt = require("bcrypt")
-//const twilio = require('twilio');
+const User = require('../models/userModels');
+const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
-
-const nodemailer = require("nodemailer");
-const crypto = require("crypto");
 
 const registerUser = async (req, res) => {
-  const { username, email, password, phone, resendOTP } = req.body;
+  const { username, email, password, resendOTP } = req.body;
 
   if (resendOTP) {
-      // User requested to resend OTP
-      const existingUser = await User.findOne({ email });
+    // User requested to resend OTP
+    const existingUser = await User.findOne({ email });
 
-      if (!existingUser) {
-          return res.status(404).json({ message: 'User not found' });
-      }
+    if (!existingUser || !existingUser.otp) {
+      return res.status(400).json({ message: 'User has not registered or does not have an OTP' });
+    }
 
-      // Generate a new OTP
-      const otp = generateOTP();
+    // Generate and sed a new OTP
+    const newOTP = generateOTP();
+    const otpSent = sendOTPEmail(email, newOTP);
 
-      // Update the user's OTP with the new one
-      existingUser.otp = otp;
-      await existingUser.save();
+    if (!otpSent) {
+      return res.status(500).json({ message: 'Failed to send a new OTP' });
+    }
 
-      // Send the new OTP to the user's email
-      const otpSent = sendOTPEmail(email, otp);
+    // Update the user's data with the new OTP
+    existingUser.otp = newOTP;
+    await existingUser.save();
 
-      if (!otpSent) {
-          return res.status(500).json({ message: 'Failed to send OTP' });
-      }
-
-      return res.status(200).json({ message: 'New OTP sent' });
+    return res.status(200).json({ message: 'New OTP sent' });
   } else {
-      // User is registering for the first time
-      // Generate a random 6-digit OTP
-      const otp = generateOTP();
+    // User is registering for the first time
+    // Check if the user already exists
+    const existingUser = await User.findOne({ email });
 
-      // Send the OTP to the user's email
-      const otpSent = sendOTPEmail(email, otp);
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+    // Generate a random 6-digit OTP
+    const otp = generateOTP();
 
-      if (!otpSent) {
-          return res.status(500).json({ message: 'Failed to send OTP' });
-      }
+    // Send the OTP to the user's email
+    const otpSent = sendOTPEmail(email, otp);
 
-      const existingUser = await User.findOne({ email });
+    if (!otpSent) {
+      return res.status(500).json({ message: 'Failed to send OTP' });
+    }
 
-      if (existingUser) {
-          return res.status(400).json({ message: 'User already exists' });
-      }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+    await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      otp,
+    });
 
-      const newUser = await User.create({
-          username,
-          email,
-          phone,
-          password: hashedPassword,
-          otp,
-      });
-
-      if (newUser) {
-          res.status(201).json({ id: newUser.id, email: newUser.email });
-      } else {
-          res.status(400).json({ message: 'User data is not valid' });
-      }
+    return res.status(201).json({ message: 'OTP sent for registration' });
   }
 };
 
-
-
 const generateOTP = () => {
-  return crypto.randomBytes(3).toString('hex'); 
+  return crypto.randomBytes(3).toString('hex');
 };
 
 const sendOTPEmail = async (email, otp) => {
@@ -80,7 +69,7 @@ const sendOTPEmail = async (email, otp) => {
     service: 'Gmail',
     auth: {
       user: process.env.USER,
-      pass: process.env.PASSWORD, 
+      pass: process.env.PASSWORD,
     },
   });
 
@@ -100,7 +89,6 @@ const sendOTPEmail = async (email, otp) => {
     return false;
   }
 };
-
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 

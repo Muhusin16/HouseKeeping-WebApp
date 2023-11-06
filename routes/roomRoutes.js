@@ -1,20 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const { createTask, updateTask } = require("../controllers/roomController");
+const { createCategory, createTaskByCategory, getCategory, getTaskByCategory, deleteCategoryById, updateCategoryById,
+    deleteTaskById, updateTaskById } = require("../controllers/roomController");
 
-router.post("/create/hall", createTask("hall"));
-router.put("/update/hall/:id",  updateTask("hall"));
+router.post("/api/categories", createCategory);
+router.post("/api/categories/:categoryId/tasks",  createTaskByCategory);
 
-router.post("/create/kitchen",  createTask("kitchen"));
-router.put("/update/kitchen/:id",  updateTask("kitchen"));
+router.get("/api/categories",  getCategory);
+router.get("/api/categories/:categoryId/tasks", getTaskByCategory);
 
-router.post("/create/reception",  createTask("reception"));
-router.put("/update/reception/:id",  updateTask("reception"));
+router.delete("/api/categories/:categoryId",  deleteCategoryById);
+router.delete("/api/categories/:categoryId/tasks/:taskId", deleteTaskById);
 
-router.post("/create/conference",  createTask("conference"));
-router.put("/update/conference/:id", updateTask("conference"));
-
-router.post("/create/washroom",  createTask("washroom"));
-router.put("/update/washroom/:id", updateTask("washroom"));
+router.put("/api/categories/:categoryId", updateCategoryById);
+router.put("/api/categories/:categoryId/tasks/:taskId",  updateTaskById);
 
 module.exports = router;
