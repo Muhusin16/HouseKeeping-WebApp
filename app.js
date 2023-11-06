@@ -20,7 +20,7 @@ app.use(CooKieParser())
 app.use("/api/user", require("./routes/userRoutes"));
 app.use("/api", require("./routes/taskRoutes"));
 app.use("/api", require("./routes/adminRoutes"))
-app.use("/api/room", require("./routes/roomRoutes"))
+app.use("/", require("./routes/roomRoutes"))
 
 connecDb();
 app.listen(PORT, () => {
