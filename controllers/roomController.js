@@ -1,27 +1,37 @@
 const Category = require("../models/categoryModel")
+const multer = require("multer")
+
+const storage = multer.memoryStorage(); // Store image data in memory as Buffer
+const upload = multer({ storage });
 
 // CREATE a new category
-const createCategory = async (req, res) => {
+const createCategory =  async (req, res) => {
   try {
-    const { title } = req.body;
-
-    // Check if a category with the same title already exists
-    const existingCategory = await Category.findOne({ title });
-
-    if (existingCategory) {
-      return res.status(400).json({ error: 'Category with this name already exists' });
-    }
-    const category = new Category(req.body);
+    upload.single('image')(req, res, async (err) =>{
+      if(err){
+        return res.status(400).json({error:"Error uploading image"})
+      }
+    })
+    // Access the uploaded image data in req.file.buffer
+    const { title, description } = req.body;
+    const image = {
+      data: req.file.buffer,
+      contentType: req.file.mimetype,
+    };
+    // Create a new category using Mongoose and save it to the database
+    const category = new Category({ title, image, description });
     await category.save();
+
     res.status(201).json(category);
   } catch (error) {
     res.status(500).json({ error: 'Error creating category' });
   }
 };
+
 //CREATE a task based on catagory
 const createTaskByCategory = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { title } = req.body;
 
     const category = await Category.findById(req.params.categoryId);
     if (!category) {
@@ -30,21 +40,20 @@ const createTaskByCategory = async (req, res) => {
     }
 
     // Check if a task with the same name already exists in the category
-    const existingTask = category.tasks.find((task) => task.name === name);
+    const existingTask = category.tasks.find((task) => task.title === title);
 
     if (existingTask) {
       return res.status(400).json({ error: 'Task with this name already exists in the category' });
     }
 
-    const { description } = req.body; // Assuming you're sending 'description'
-    const task = { name, description }; // Create a task object
+    const {description } = req.body; // Assuming you're sending 'description'
+    const task = { title, description }; // Create a task object
 
-    category.tasks.push(task);
+    category.tasks.push({...task});
     // You can update 'numberOfTasks' if needed based on the length of category.tasks
     // category.numberOfTasks = category.tasks.length;
 
     await category.save();
-
     res.status(200).json(category);
   } catch (error) {
     res.status(500).json({ error: 'Error adding a task' });
@@ -98,8 +107,9 @@ const deleteCategoryById = async (req, res) => {
       return;
     }
 
-    await category.remove();
-    res.status(204).json(); // 204 No Content
+    await Category.deleteOne({ _id: req.params.categoryId });
+
+    res.status(204).json({message: "Category deleted successfully"}); // 204 No Content
   } catch (error) {
     res.status(500).json({ error: 'Error deleting the category' });
   }
