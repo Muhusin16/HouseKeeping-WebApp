@@ -4,29 +4,37 @@ const multer = require("multer")
 const storage = multer.memoryStorage(); // Store image data in memory as Buffer
 const upload = multer({ storage });
 
-// CREATE a new category
-const createCategory =  async (req, res) => {
+const createCategory = async (req, res) => {
   try {
-    upload.single('image')(req, res, async (err) =>{
-      if(err){
-        return res.status(400).json({error:"Error uploading image"})
+    // This middleware handles the file upload
+    upload.single('image')(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: "Error uploading image" });
       }
-    })
-    // Access the uploaded image data in req.file.buffer
-    const { title, description } = req.body;
-    const image = {
-      data: req.file.buffer,
-      contentType: req.file.mimetype,
-    };
-    // Create a new category using Mongoose and save it to the database
-    const category = new Category({ title, image, description });
-    await category.save();
 
-    res.status(201).json(category);
+      try {
+        // Access the uploaded image data in req.file.buffer
+        const { title, description } = req.body;
+        const image = {
+          data: req.file.buffer,
+          contentType: req.file.mimetype,
+        };
+
+        // Create a new category using Mongoose and save it to the database
+        const category = new Category({ title, image, description });
+        await category.save();
+
+        res.status(201).json(category);
+      } catch (error) {
+        res.status(500).json({ error: 'Error creating category' });
+      }
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Error creating category' });
+    res.status(500).json({ error: 'Error handling the request' });
   }
 };
+
+
 
 //CREATE a task based on catagory
 const createTaskByCategory = async (req, res) => {
