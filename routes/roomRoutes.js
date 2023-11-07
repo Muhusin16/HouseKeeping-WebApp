@@ -1,13 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { createCategory, createTaskByCategory, getCategory, getTaskByCategory, deleteCategoryById, updateCategoryById,
-    deleteTaskById, updateTaskById } = require("../controllers/roomController");
+        deleteTaskById, updateTaskById } = require("../controllers/roomController");
 
-const multer = require("multer");
-const storage = multer.memoryStorage(); // Store image data in memory as Buffer
-const upload = multer({ storage });
-
-router.post("/api/categories", upload.single('image'), createCategory);
+router.post("/api/categories", createCategory);
 router.post("/api/categories/:categoryId/tasks", createTaskByCategory);
 
 router.get("/api/categories", getCategory);
