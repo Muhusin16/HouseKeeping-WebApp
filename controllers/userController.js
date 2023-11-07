@@ -4,60 +4,65 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
-
 const registerUser = async (req, res) => {
-  const { username, email, password, resendOTP } = req.body;
+  const { username, email, password, phone } = req.body;
 
-  if (resendOTP) {
-    // User requested to resend OTP
-    const existingUser = await User.findOne({ email });
+  // Check if the user already exists
+  const existingUser = await User.findOne({ email });
 
-    if (!existingUser || !existingUser.otp) {
-      return res.status(400).json({ message: 'User has not registered or does not have an OTP' });
-    }
-
-    // Generate and sed a new OTP
-    const newOTP = generateOTP();
-    const otpSent = sendOTPEmail(email, newOTP);
-
-    if (!otpSent) {
-      return res.status(500).json({ message: 'Failed to send a new OTP' });
-    }
-
-    // Update the user's data with the new OTP
-    existingUser.otp = newOTP;
-    await existingUser.save();
-
-    return res.status(200).json({ message: 'New OTP sent' });
-  } else {
-    // User is registering for the first time
-    // Check if the user already exists
-    const existingUser = await User.findOne({ email });
-
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-    // Generate a random 6-digit OTP
-    const otp = generateOTP();
-
-    // Send the OTP to the user's email
-    const otpSent = sendOTPEmail(email, otp);
-
-    if (!otpSent) {
-      return res.status(500).json({ message: 'Failed to send OTP' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await User.create({
-      username,
-      email,
-      password: hashedPassword,
-      otp,
-    });
-
-    return res.status(201).json({ message: 'OTP sent for registration' });
+  if (existingUser) {
+    // User already exists
+    return res.status(400).json({ message: 'User already exists' });
   }
+  
+  // Generate a random 6-digit OTP
+  const otp = generateOTP();
+
+  // Send the OTP to the user's email
+  const otpSent = sendOTPEmail(email, otp);
+
+  if (!otpSent) {
+    return res.status(500).json({ message: 'Failed to send OTP' });
+  }
+
+  // User is registering for the first time
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await User.create({
+    username,
+    email,
+    phone,
+    password: hashedPassword,
+    otp,
+  });
+
+  return res.status(201).json({ message: 'OTP sent for registration' });
+};
+
+const resendOTP = async (req, res) => {
+  const { email } = req.body;
+
+  // Check if the user exists in the database
+  const existingUser = await User.findOne({ email });
+
+  if (!existingUser || !existingUser.otp) {
+    // User does not exist or does not have an OTP
+    return res.status(400).json({ message: 'User has not registered or does not have an OTP' });
+  }
+
+  // Generate and send a new OTP
+  const newOTP = generateOTP();
+  const otpSent = sendOTPEmail(email, newOTP);
+
+  if (!otpSent) {
+    return res.status(500).json({ message: 'Failed to send a new OTP' });
+  }
+
+  // Update the user's data with the new OTP
+  existingUser.otp = newOTP;
+  await existingUser.save();
+
+  return res.status(200).json({ message: 'New OTP sent' });
 };
 
 const generateOTP = () => {
@@ -79,7 +84,6 @@ const sendOTPEmail = async (email, otp) => {
     subject: 'Your OTP for Registration',
     text: `Your OTP for registration is: ${otp}`,
   };
-
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log(`Email sent: ${info.response}`);
@@ -89,6 +93,7 @@ const sendOTPEmail = async (email, otp) => {
     return false;
   }
 };
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -217,4 +222,4 @@ const homepage = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, homepage, forgetPassword, resetPassword };
+module.exports = { registerUser, loginUser, homepage, forgetPassword, resetPassword, resendOTP};

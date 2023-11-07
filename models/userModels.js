@@ -9,15 +9,22 @@ const userSchema = mongoose.Schema({
         required: [true, "Please add the user email address"],
         unique: [true, "Email address already taken"]
     },
-    
+    phone: {
+        type: Number,
+        required: [true, "Please enter your mobile number"],
+        unique: [true, "Phone number already exist"]
+    },
     password:{
         type: String,
         required: [true, "Please add the user password"],
     },
     otp: String,
+    userOTP:{
+        type: Boolean,
+        default: false,
+    },
     resetPasswordToken: String,
     resetPasswordTokenExpiration: Date,
-    
 },
 {
     timestamps: true,

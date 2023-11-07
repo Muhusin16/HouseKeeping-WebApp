@@ -10,12 +10,11 @@ const categorySchema = new mongoose.Schema({
     }
   },
   description: String,
- 
   tasks: [
     {
-      name: String,
-
+      title: String,
       description: String,
+     
       how: {
         type: Boolean,
         default: false,
