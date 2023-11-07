@@ -2,13 +2,7 @@ const mongoose = require("mongoose");
 
 const categorySchema = new mongoose.Schema({
   title: String,
-  image: {
-    data: Buffer, 
-    contentType:{ 
-      type: String,
-      required: true
-    }
-  },
+  image:String,
   description: String,
   tasks: [
     {

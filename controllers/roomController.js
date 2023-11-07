@@ -1,40 +1,46 @@
 const Category = require("../models/categoryModel")
-const multer = require("multer")
 
-const storage = multer.memoryStorage(); // Store image data in memory as Buffer
+const multer = require('multer');
+const path = require("path");
+
+// Set up Multer for handling image uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/Images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
+  },
+});
+
 const upload = multer({ storage });
 
+// CREATE a new category with image upload
 const createCategory = async (req, res) => {
-  try {
-    // This middleware handles the file upload
-    upload.single('image')(req, res, async (err) => {
-      if (err) {
-        return res.status(400).json({ error: "Error uploading image" });
+  upload.single('image')(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ error: "Error uploading image" });
+    }
+
+    try {
+      const { title, description } = req.body;
+      const image = req.file ? req.file.filename : null; // Get the uploaded image filename
+
+      // Check if a category with the same title already exists
+      const existingCategory = await Category.findOne({ title });
+
+      if (existingCategory) {
+        return res.status(400).json({ error: 'Category with this name already exists' });
       }
 
-      try {
-        // Access the uploaded image data in req.file.buffer
-        const { title, description } = req.body;
-        const image = {
-          data: req.file.buffer,
-          contentType: req.file.mimetype,
-        };
-
-        // Create a new category using Mongoose and save it to the database
-        const category = new Category({ title, image, description });
-        await category.save();
-
-        res.status(201).json(category);
-      } catch (error) {
-        res.status(500).json({ error: 'Error creating category' });
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Error handling the request' });
-  }
+      const category = new Category({ title, image, description });
+      await category.save();
+      res.status(201).json(category);
+    } catch (error) {
+      res.status(500).json({ error: 'Error creating category' });
+    }
+  });
 };
-
-
 
 //CREATE a task based on catagory
 const createTaskByCategory = async (req, res) => {
@@ -54,10 +60,10 @@ const createTaskByCategory = async (req, res) => {
       return res.status(400).json({ error: 'Task with this name already exists in the category' });
     }
 
-    const {description } = req.body; // Assuming you're sending 'description'
-    const task = { title, description }; // Create a task object
+    const { description } = req.body; // Assuming you're sending 'description'
+    const task = { task, description }; // Create a task object
 
-    category.tasks.push({...task});
+    category.tasks.push(task);
     // You can update 'numberOfTasks' if needed based on the length of category.tasks
     // category.numberOfTasks = category.tasks.length;
 
@@ -115,9 +121,8 @@ const deleteCategoryById = async (req, res) => {
       return;
     }
 
-    await Category.deleteOne({ _id: req.params.categoryId });
-
-    res.status(204).json({message: "Category deleted successfully"}); // 204 No Content
+    await category.remove();
+    res.status(204).json(); // 204 No Content
   } catch (error) {
     res.status(500).json({ error: 'Error deleting the category' });
   }

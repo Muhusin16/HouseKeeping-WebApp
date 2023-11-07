@@ -49,7 +49,6 @@ const resendOTP = async (req, res) => {
     // User does not exist or does not have an OTP
     return res.status(400).json({ message: 'User has not registered or does not have an OTP' });
   }
-
   // Generate and send a new OTP
   const newOTP = generateOTP();
   const otpSent = sendOTPEmail(email, newOTP);
