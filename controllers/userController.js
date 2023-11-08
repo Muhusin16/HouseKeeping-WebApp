@@ -5,9 +5,10 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
 const registerUser = async (req, res) => {
+
   const { username, email, password, phone } = req.body;
 
-  // Check if the user already exists
+  // Checking if the user already exists
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
@@ -37,7 +38,26 @@ const registerUser = async (req, res) => {
   });
 
   return res.status(201).json({ message: 'OTP sent for registration' });
-};
+
+}
+
+// const getuser = async (req, res) => {
+//   const { email } = req.query; // Use req.query to retrieve the email parameter from the URL query string
+
+//   try {
+//     const existUser = await User.findOne({ email });
+
+//     if (existUser) {
+//       return res.status(200).json(existUser);
+//     } else {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: 'Internal Server Error'});
+// }
+// };
+ 
 
 const resendOTP = async (req, res) => {
   const { email } = req.body;
@@ -65,7 +85,13 @@ const resendOTP = async (req, res) => {
 };
 
 const generateOTP = () => {
-  return crypto.randomBytes(3).toString('hex');
+  const digits = '0123456789';
+  let otp = '';
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * digits.length);
+    otp += digits.charAt(randomIndex);
+  }
+  return otp;
 };
 
 const sendOTPEmail = async (email, otp) => {
@@ -129,7 +155,7 @@ const sendResetPasswordEmail = async (email, resetPasswordToken) => {
     from: 'muhusin@zool.in',
     to: email,
     subject: 'Reset Password Request',
-    text: `To reset your password, click the following link: ${resetPasswordToken}`,
+    text: `To reset your password, Use the following OTP: ${resetPasswordToken}`,
   };
 
   try {
@@ -145,9 +171,17 @@ const sendResetPasswordEmail = async (email, resetPasswordToken) => {
 const forgetPassword = async (req, res) => {
   const { email } = req.body;
 
+  
   const generateResetPasswordToken = () => {
-    return crypto.randomBytes(3).toString('hex'); 
+    const digits = '0123456789';
+    let otp = '';
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * digits.length);
+      otp += digits.charAt(randomIndex);
+    }
+    return otp;
   };
+
 
   const resetPasswordToken = generateResetPasswordToken();
   const resetPasswordTokenExpiration = new Date(Date.now() + 3600000); // 1 hour
