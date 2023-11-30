@@ -3,7 +3,7 @@ const router = express.Router();
 const { getAllUsers, adminUser, getUserById, updateUser, deleteUser} = require('../controllers/adminController');
 const isAdmin = require("../middleware/adminHandler")
 
-router.post("/admin", adminUser);
+router.post("/login",isAdmin, adminUser);
 
 router.get('/users',isAdmin,  getAllUsers);
 

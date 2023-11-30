@@ -21,6 +21,16 @@ app.use(express.json())
 app.use(CooKieParser())
 app.use(express.static("public"))
 
+app.use("/api/user", require("./routes/userRoutes"));
+app.use("/api", require("./routes/taskRoutes"));
+app.use("/api/admin", require("./routes/adminRoutes"))
+app.use("/", require("./routes/roomRoutes"))
+
+connecDb();
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
 // const storage = multer.diskStorage({
 //   destination:(req, file, cb) =>{
 //     cb(null, "public/Images")
@@ -38,14 +48,3 @@ app.use(express.static("public"))
 //   .then(result => res.json(result))
 //   .catch(err => console.log(err))
 // })
-
-
-app.use("/api/user", require("./routes/userRoutes"));
-app.use("/api", require("./routes/taskRoutes"));
-app.use("/api", require("./routes/adminRoutes"))
-app.use("/", require("./routes/roomRoutes"))
-
-connecDb();
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
