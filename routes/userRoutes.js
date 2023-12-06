@@ -10,11 +10,11 @@ router.post("/register", registerUser);
 
 router.post("/login", loginUser);
 
-router.post("/forgot-password", forgetPassword)
+router.post("/forgot-password", forgetPassword);
 
-router.post("/reset-password", resetPassword)
+router.post("/reset-password", resetPassword);
 
-router.post("/resend-otp", resendOTP)
+router.post("/resend-otp", resendOTP);
 
 router.get("/home",validateToken, homepage);
 

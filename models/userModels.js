@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 const userSchema = mongoose.Schema({
+    userId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
     username:{
         type: String,
         required: [true, "Please add the user name"],
@@ -18,7 +22,6 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Please add the user password"],
     },
-    otp: String,
     resetPasswordToken: String,
     resetPasswordTokenExpiration: Date,
 },

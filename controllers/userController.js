@@ -5,8 +5,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
 const registerUser = async (req, res) => {
-
-  const { username, email, password, phone } = req.body;
+  const {username, email, password, phone } = req.body;
 
   // Checking if the user already exists
   const existingUser = await User.findOne({ email });
@@ -15,7 +14,7 @@ const registerUser = async (req, res) => {
     // User already exists
     return res.status(400).json({ message: 'User already exists' });
   }
-  
+
   // Generate a random 6-digit OTP
   const otp = generateOTP();
 
@@ -27,19 +26,20 @@ const registerUser = async (req, res) => {
   }
 
   // User is registering for the first time
+  // Hash the password before saving it to the database
   const hashedPassword = await bcrypt.hash(password, 10);
 
   await User.create({
+    
     username,
     email,
     phone,
-    password: hashedPassword,
+    password: hashedPassword, // Save the hashed password
     otp,
   });
 
   return res.status(201).json({ message: 'OTP sent for registration' });
-
-}
+};
 
 // const getuser = async (req, res) => {
 //   const { email } = req.query; // Use req.query to retrieve the email parameter from the URL query string
@@ -128,6 +128,7 @@ const loginUser = async (req, res) => {
     return res.status(401).json({ message: 'Authentication failed' });
   }
 
+  // Compare the provided password with the hashed password in the database
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordMatch) {
@@ -135,10 +136,11 @@ const loginUser = async (req, res) => {
   }
 
   const token = jwt.sign(
-  { userId: user._id, email: user.email },
-  process.env.SECRET_ACCESS_KEY,
-  { expiresIn: '7d' }
+    { userId: user._id, email: user.email },
+    process.env.SECRET_ACCESS_KEY,
+    { expiresIn: '7d' }
   );
+
   res.status(200).json({ token });
 };
 
@@ -211,30 +213,31 @@ const resetPassword = async (req, res) => {
   const { email, resetPasswordToken, newPassword } = req.body;
 
   try {
-      const user = await User.findOne({
-          email,
-          resetPasswordToken,
-          resetPasswordTokenExpiration: { $gt: Date.now() },
-      });
+    const user = await User.findOne({
+      email,
+      resetPasswordToken,
+      resetPasswordTokenExpiration: { $gt: Date.now() },
+    });
 
-      if (!user) {
-          return res.status(400).json({ message: 'Invalid or expired reset password token' });
-      }
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset password token' });
+    }
 
-      // Update the user's password with the new one
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      user.password = hashedPassword;
+    // Update the user's password with the new one (hash the new password)
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-      // Clear the reset password token and expiration
-      user.resetPasswordToken = undefined;
-      user.resetPasswordTokenExpiration = undefined;
+    user.password = hashedPassword;
 
-      await user.save();
+    // Clear the reset password token and expiration
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTokenExpiration = undefined;
 
-      res.status(200).json({ message: 'Password reset successful' });
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successful' });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
