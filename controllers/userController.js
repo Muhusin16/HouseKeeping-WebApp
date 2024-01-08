@@ -1,8 +1,80 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/userModels');
-const bcrypt = require('bcrypt');
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
+const jwt = require("jsonwebtoken");
+const User = require("../models/userModels");
+const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
+const redis = require("redis");
+const admin = require("firebase-admin");
+const credentials = require("../Key.json");
+const { promisify } = require('util');
+const dotenv = require("dotenv");
+require("dotenv").config();
+
+admin.initializeApp({
+  credential: admin.credential.cert(credentials),
+});
+const db = admin.firestore();
+
+const redisHost = '127.0.0.1'; 
+const redisPort = 6379;
+
+// Initialize Redis client
+const redisClient = redis.createClient({
+  redisHost,
+  redisPort
+});
+
+redisClient.on("error", (error) => console.error(`Error: ${error}`));
+
+const createUser = async (req, res) => {
+  try {
+    const id = req.body.email;
+    const userJson = {
+      email: req.body.email,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+    };
+    // Save user details in Firestore
+    const response = await db.collection("users").doc(id).set(userJson);
+    res.send(userJson);
+  } catch (error) {
+    console.error(error);
+    res.send(error);
+  }
+};
+
+const signUp = async (req, res) => {
+  const user = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+  const userResponse = await admin.auth().createUser({
+    email: user.email,
+    password: user.password,
+    emailVerified: false,
+    disabled: false,
+  });
+  res.json(userResponse);
+};
+
+const login = async (req, res) => {
+  const user = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+  try {
+    const userRecord = await admin.auth().getUserByEmail(user.email);
+
+    const token = await admin.auth().createCustomToken(userRecord.uid);
+    res.json({ token });
+  } catch (error) {
+    console.error("Error retrieving user:", error);
+    res.status(401).json({ error: "Invalid credentials" });
+  }
+};
+
+// const getAsync = promisify(redisClient.get).bind(redisClient);
+const setAsync = promisify(redisClient.set).bind(redisClient);
 
 const registerUser = async (req, res) => {
   const {username, email, password, phone } = req.body;
@@ -12,7 +84,7 @@ const registerUser = async (req, res) => {
 
   if (existingUser) {
     // User already exists
-    return res.status(400).json({ message: 'User already exists' });
+    return res.status(400).json({ message: "User already exists" });
   }
 
   // Generate a random 6-digit OTP
@@ -22,25 +94,24 @@ const registerUser = async (req, res) => {
   const otpSent = sendOTPEmail(email, otp);
 
   if (!otpSent) {
-    return res.status(500).json({ message: 'Failed to send OTP' });
+    return res.status(500).json({ message: "Failed to send OTP" });
   }
 
-  // User is registering for the first time
-  // Hash the password before saving it to the database
   const hashedPassword = await bcrypt.hash(password, 10);
 
   await User.create({
-    
     username,
     email,
     phone,
-    password: hashedPassword, // Save the hashed password
+    password: hashedPassword,
     otp,
   });
 
-  return res.status(201).json({ message: 'OTP sent for registration' });
-};
+  // Store user details in Redis cache
+  await setAsync(`user:${email}`, JSON.stringify({ username, email, phone, password: hashedPassword, otp }));
 
+  return res.status(201).json({ message: "OTP sent for registration" });
+};
 // const getuser = async (req, res) => {
 //   const { email } = req.query; // Use req.query to retrieve the email parameter from the URL query string
 
@@ -57,7 +128,6 @@ const registerUser = async (req, res) => {
 //     return res.status(500).json({ message: 'Internal Server Error'});
 // }
 // };
- 
 
 const resendOTP = async (req, res) => {
   const { email } = req.body;
@@ -67,26 +137,27 @@ const resendOTP = async (req, res) => {
 
   if (!existingUser || !existingUser.otp) {
     // User does not exist or does not have an OTP
-    return res.status(400).json({ message: 'User has not registered or does not have an OTP' });
+    return res
+      .status(400)
+      .json({ message: "User has not registered or does not have an OTP" });
   }
   // Generate and send a new OTP
   const newOTP = generateOTP();
   const otpSent = sendOTPEmail(email, newOTP);
 
   if (!otpSent) {
-    return res.status(500).json({ message: 'Failed to send a new OTP' });
+    return res.status(500).json({ message: "Failed to send a new OTP" });
   }
 
   // Update the user's data with the new OTP
   existingUser.otp = newOTP;
   await existingUser.save();
-
-  return res.status(200).json({ message: 'New OTP sent' });
+  return res.status(200).json({ message: "New OTP sent" });
 };
 
 const generateOTP = () => {
-  const digits = '0123456789';
-  let otp = '';
+  const digits = "0123456789";
+  let otp = "";
   for (let i = 0; i < 6; i++) {
     const randomIndex = Math.floor(Math.random() * digits.length);
     otp += digits.charAt(randomIndex);
@@ -96,7 +167,7 @@ const generateOTP = () => {
 
 const sendOTPEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    service: "Gmail",
     auth: {
       user: process.env.USER,
       pass: process.env.PASSWORD,
@@ -104,9 +175,9 @@ const sendOTPEmail = async (email, otp) => {
   });
 
   const mailOptions = {
-    from: 'muhusin@zool.in',
+    from: "muhusin@zool.in",
     to: email,
-    subject: 'Your OTP for Registration',
+    subject: "Your OTP for Registration",
     text: `Your OTP for registration is: ${otp}`,
   };
   try {
@@ -125,20 +196,20 @@ const loginUser = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    return res.status(401).json({ message: 'Authentication failed' });
+    return res.status(401).json({ message: "Authentication failed" });
   }
 
   // Compare the provided password with the hashed password in the database
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordMatch) {
-    return res.status(401).json({ message: 'Authentication failed' });
+    return res.status(401).json({ message: "Authentication failed" });
   }
 
   const token = jwt.sign(
     { userId: user._id, email: user.email },
     process.env.SECRET_ACCESS_KEY,
-    { expiresIn: '7d' }
+    { expiresIn: "7d" }
   );
 
   res.status(200).json({ token });
@@ -146,17 +217,17 @@ const loginUser = async (req, res) => {
 
 const sendResetPasswordEmail = async (email, resetPasswordToken) => {
   const transporter = nodemailer.createTransport({
-    service: 'Gmail', 
+    service: "Gmail",
     auth: {
       user: process.env.USER,
-      pass: process.env.PASSWORD, 
+      pass: process.env.PASSWORD,
     },
   });
 
   const mailOptions = {
-    from: 'muhusin@zool.in',
+    from: "muhusin@zool.in",
     to: email,
-    subject: 'Reset Password Request',
+    subject: "Reset Password Request",
     text: `To reset your password, Use the following OTP: ${resetPasswordToken}`,
   };
 
@@ -173,10 +244,9 @@ const sendResetPasswordEmail = async (email, resetPasswordToken) => {
 const forgetPassword = async (req, res) => {
   const { email } = req.body;
 
-  
   const generateResetPasswordToken = () => {
-    const digits = '0123456789';
-    let otp = '';
+    const digits = "0123456789";
+    let otp = "";
     for (let i = 0; i < 6; i++) {
       const randomIndex = Math.floor(Math.random() * digits.length);
       otp += digits.charAt(randomIndex);
@@ -184,28 +254,27 @@ const forgetPassword = async (req, res) => {
     return otp;
   };
 
-
   const resetPasswordToken = generateResetPasswordToken();
   const resetPasswordTokenExpiration = new Date(Date.now() + 3600000); // 1 hour
 
   try {
-      const user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-      if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-      }
-  
-      user.resetPasswordToken = resetPasswordToken;
-      user.resetPasswordTokenExpiration = resetPasswordTokenExpiration;
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-      await user.save();
+    user.resetPasswordToken = resetPasswordToken;
+    user.resetPasswordTokenExpiration = resetPasswordTokenExpiration;
 
-      sendResetPasswordEmail(email, resetPasswordToken);
+    await user.save();
 
-      res.status(200).json({ message: 'Reset password email sent' });
+    sendResetPasswordEmail(email, resetPasswordToken);
+
+    res.status(200).json({ message: "Reset password email sent" });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -220,7 +289,9 @@ const resetPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid or expired reset password token' });
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired reset password token" });
     }
 
     // Update the user's password with the new one (hash the new password)
@@ -234,28 +305,37 @@ const resetPassword = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({ message: 'Password reset successful' });
+    res.status(200).json({ message: "Password reset successful" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const homepage = async (req, res) => {
   try {
-  
     const user = req.user;
 
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(401).json({ message: "User not found" });
     }
     res.status(200).json({
       message: `Authentication Successful, Welcome to the task page ${user.username}`,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-module.exports = { registerUser, loginUser, homepage, forgetPassword, resetPassword, resendOTP};
+module.exports = {
+  registerUser,
+  loginUser,
+  homepage,
+  forgetPassword,
+  resetPassword,
+  resendOTP,
+  createUser,
+  signUp,
+  login,
+};

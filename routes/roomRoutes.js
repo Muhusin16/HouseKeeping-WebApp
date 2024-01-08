@@ -16,4 +16,3 @@ router.put("/api/categories/:categoryId", updateCategoryById);
 router.put("/api/categories/:categoryId/tasks/:taskId", updateTaskById);
 
 module.exports = router;
-

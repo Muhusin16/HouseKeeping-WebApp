@@ -1,10 +1,16 @@
 const express =require("express");
 
-const { registerUser, loginUser, homepage, forgetPassword, resetPassword, resendOTP } = require("../controllers/userController");
+const { registerUser, loginUser, homepage, forgetPassword, resetPassword, resendOTP, createUser, signUp, login, } = require("../controllers/userController");
 
 const {validateToken} = require("../middleware/validatetokenHandler");
 
 const router = express.Router();
+
+router.post("/create", createUser)
+
+router.post("/signUp", signUp)
+
+router.post("/login", login)
 
 router.post("/register", registerUser);
 
